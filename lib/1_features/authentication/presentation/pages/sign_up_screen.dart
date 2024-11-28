@@ -4,6 +4,7 @@ import 'package:country_codes/country_codes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hediety/1_features/authentication/presentation/manager/authentication_op/authentication_op_cubit.dart';
 import 'package:intl_phone_number_field/intl_phone_number_field.dart';
 
 import '../../../../2_global_bloc_layer/app_user_blocs/set_app_user_cubit/set_app_user_cubit.dart';
@@ -16,36 +17,11 @@ import '../../../../core/widgets/buttons/button_widget.dart';
 import '../../../../core/widgets/buttons/text_button_widget.dart';
 import '../../../../core/widgets/drop_down_menu_widget.dart';
 import '../../../../core/widgets/text_fields/text_field.dart';
-import '../../auth_utility_functions/auth_input_validator.dart';
 import '../../auth_utility_functions/auth_utility_functions.dart';
 import '../../auth_utility_functions/firebase_auth_services.dart';
 import '../../domain/entities/password_checker.dart';
 import '../../domain/sample_static_data.dart';
-import '../widgets/password_checker_widget.dart';
 
-PasswordChecker passwordHasMoreThan6Characters = PasswordChecker(
-  label: 'More than 6 characters',
-);
-PasswordChecker passwordContainsUpperLetter = PasswordChecker(
-  label: 'Contains a uppercase letter',
-);
-PasswordChecker passwordContainsLowerLetter = PasswordChecker(
-  label: 'Contains a lowercase letter',
-);
-PasswordChecker passwordContainsNumericDigit = PasswordChecker(
-  label: 'Contains a numeric digit',
-);
-PasswordChecker passwordContainsSpecialCharacter = PasswordChecker(
-  label: 'Contains a special character',
-);
-
-List<PasswordChecker> passwordCheckers = [
-  passwordHasMoreThan6Characters,
-  passwordContainsUpperLetter,
-  passwordContainsLowerLetter,
-  passwordContainsNumericDigit,
-  passwordContainsSpecialCharacter
-];
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -77,12 +53,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   List<String> countryNames = [];
 
-  void updatePasswordCheckers() {
-    setState(() {
-      passwordIsValid =
-          AuthInputValidator.validatePassword(passwordController.text);
-    });
-  }
+  // void updatePasswordCheckers() {
+  //   setState(() {
+  //     passwordIsValid =
+  //         AuthInputValidator.validatePassword(passwordController.text);
+  //   });
+  // }
 
   @override
   void initState() {
@@ -110,19 +86,42 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<SetAppUserCubit, SetAppUserState>(
-      listener: (context, state) {
-        if (state is SetAppUserLoaded) {
-          Navigator.pushNamedAndRemoveUntil(context, Routes.authWrapper,
-              ModalRoute.withName(Routes.authWrapper));
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<SetAppUserCubit, SetAppUserState>(
+          listener: (context, state) {
+            if (state is SetAppUserLoaded) {
+              Navigator.pushNamedAndRemoveUntil(context, Routes.authWrapper,
+                  ModalRoute.withName(Routes.authWrapper));
 
-          //Raslan moved nvigator here to navigate only when adding user
-        } else if (state is SetAppUserError) {
-          //Raslan error handling for error in adding user
-        } else {
-          //Raslan loading handling
-        }
-      },
+              //Raslan moved nvigator here to navigate only when adding user
+            } else if (state is SetAppUserError) {
+              //Raslan error handling for error in adding user
+            } else {
+              //Raslan loading handling
+            }
+          },
+        ),
+        BlocListener<AuthenticationOpCubit, AuthenticationOpState>(
+          listener: (context, state) {
+            if (state is AuthenticationOpLoaded) {
+              BlocProvider.of<SetAppUserCubit>(context).setAppUser(AppUser(
+                  id: state.userCredential.user!.uid,
+                  joinDate: DateTime.now(),
+                  name: nameController.text,
+                  email: state.userCredential.user!.email!,
+                  phoneNumber: phoneNumber,
+                  fcmToken: null));
+
+              //Raslan moved nvigator here to navigate only when adding user
+            } else if (state is SetAppUserError) {
+              //Raslan error handling for error in adding user
+            } else {
+              //Raslan loading handling
+            }
+          },
+        ),
+      ],
       child: Scaffold(
         backgroundColor: AppColors.backgroundWhite,
         body: Padding(
@@ -142,8 +141,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       const Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                        ],
+                        children: [],
                       ),
                       const SizedBox(
                         height: 20,
@@ -178,39 +176,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           labelText: 'Enter your email',
                           //S.of(context).email,
                           textController: emailController,
-                          validator: (value) =>
-                              AuthInputValidator.validateEmail(
-                                      emailController.text)
-                                  ? null
-                                  : 'invalid email',
+                          // validator: (value) =>
+                          //     AuthInputValidator.validateEmail(
+                          //             emailController.text)
+                          //         ? null
+                          //         : 'invalid email',
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: DropDownMenuWidget(
-                          label: 'Select your country',
-                          textController: countryController,
-                          dropdownItemsAsStrings: CountryCodes.countryCodes()
-                              .map((code) => code.localizedName.toString())
-                              .toList(),
-                          selectedItem: selectedCountry,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedCountry = value;
-                              countryController.text =
-                                  selectedCountry ?? sampleCountries.first.name;
-                            });
-                          },
-                          validator: (value) => (selectedCountry == null ||
-                                  selectedCountry!.isEmpty)
-                              ? 'Please select a country'
-                              : null,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: phoneNumberWidget(),
-                      ),
+                      // Padding(
+                      //   padding: const EdgeInsets.symmetric(vertical: 8),
+                      //   child: phoneNumberWidget(),
+                      // ),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         child: TextFieldWidget(
@@ -222,15 +198,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                           onChanged: (value) {
                             setState(() {
-                              validatePassword(passwordController.text);
+                              // validatePassword(passwordController.text);
                             });
                           },
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: listOfPasswordCheckers(),
-                      ),
+                      // Padding(
+                      //   padding: const EdgeInsets.symmetric(vertical: 8),
+                      //   child: listOfPasswordCheckers(),
+                      // ),
                       const SizedBox(
                         height: 15,
                       ),
@@ -240,17 +216,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               false) {}
 
                           // AuthUtilityFunctions.validatePassword(passwordController.text);
-                          var user = await handleSignUpRequest(context);
-                          if (user != null) {
-                            BlocProvider.of<SetAppUserCubit>(context)
-                                .setAppUser(AppUser(
-                              id: user.uid,
-                              name: nameController.text,
-                              email: emailController.text,
-                              joinDate: DateTime.now(),
-                              fcmToken: null, phoneNumber: phoneNumberController.text,
-                            ));
-                          }
+                          await handleSignUpRequest(context);
                           // signUp(email: emailController.text, password: passwordController.text, context: context);
                         },
                         text: 'Sign Up',
@@ -260,7 +226,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         children: [
                           Padding(
                             padding: const EdgeInsets.all(20),
-                            child: signInInsteadButton(context),
+                            child: signInInsteadButton(context, () {
+                              Navigator.of(context)
+                                  .pushReplacementNamed(Routes.authWrapper);
+                            }),
                           ),
                         ],
                       ),
@@ -278,7 +247,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  Widget signInInsteadButton(BuildContext context) {
+  Widget signInInsteadButton(BuildContext context, Function() onTap) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -291,59 +260,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
             textColors: AppColors.textPrimaryColor,
             fontWeight: FontWeight.w800,
             fontSize: 16,
-            onTap: () {
-              Navigator.of(context).pushReplacementNamed(Routes.signInRoute);
-            }),
+            onTap: onTap),
       ],
     );
-  }
-
-  //amr changes
-  Future<User?> signUp(
-      {required String email,
-      required String password,
-      required BuildContext context}) async {
-    String? errorMessage;
-
-    try {
-      User? user = await FirebaseAuthServices.instance.register(
-        email: email,
-        password: password,
-      );
-
-      if (user != null) {
-        AuthUtilityFunctions.setAccessToken(user.uid);
-      } else {
-        AuthUtilityFunctions.resetAccessToken();
-      }
-      if (context.mounted) {
-        //Raslan removed the push from here to the bloc listener
-      }
-      return user;
-    } catch (e) {
-      if (context.mounted) {
-        showDialog(
-            builder: (context) => AlertDialogWidget(
-                  title: "Error",
-                  contentText: e.toString(),
-                ),
-            context: context);
-      }
-
-      setState(() {
-        errorMessage = e.toString();
-      });
-
-      return null;
-    }
   }
 
   Future<User?> handleSignUpRequest(BuildContext context) async {
     setState(() {
       submitButtonPressed = true;
       passwordIsValid =
-          AuthInputValidator.validatePassword(passwordController.text);
-      emailIsValid = AuthInputValidator.validateEmail(emailController.text);
+          true;
+      emailIsValid = true;
     });
     if (!emailIsValid) {
       showDialog(
@@ -356,10 +283,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
           builder: (context) =>
               const AlertDialogWidget(contentText: "Password is invalid"));
     } else {
-      return await signUp(
-          email: emailController.text,
-          password: passwordController.text,
-          context: context);
+      BlocProvider.of<AuthenticationOpCubit>(context)
+          .createAccountWithEmailAndPassword(
+              email: emailController.text, password: passwordController.text);
     }
     return null;
   }
@@ -442,74 +368,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  Widget listOfPasswordCheckers() {
-    setState(() {
-      AuthInputValidator.validatePassword(passwordController.text);
-      validatePassword(passwordController.text);
-    });
 
-    return Column(
-      children: [
-        ...passwordCheckers.map((passwordChecker) {
-          return PasswordCheckerWidget(
-            submitButtonPressed: submitButtonPressed,
-            passwordChecker: passwordChecker,
-            passwordCheckerIndex: passwordCheckers.indexOf(passwordChecker),
-          );
-        }),
-      ],
-    );
-  }
 
-  bool validatePassword(String password) {
-    bool passwordIsValid = true;
-
-    setState(() {
-      if (password.isEmpty) {
-        passwordIsValid = false;
-
-        passwordHasMoreThan6Characters.status =
-            PasswordCheckerStatus.notFulfilled;
-      }
-      if (password.length < 6) {
-        passwordIsValid = false;
-        passwordHasMoreThan6Characters.status =
-            PasswordCheckerStatus.notFulfilled;
-      } else {
-        passwordHasMoreThan6Characters.status = PasswordCheckerStatus.fulfilled;
-      }
-      if (password.contains(RegExp(r'[a-z]')) == false) {
-        passwordIsValid = false;
-        passwordContainsLowerLetter.status = PasswordCheckerStatus.notFulfilled;
-      } else {
-        passwordContainsLowerLetter.status = PasswordCheckerStatus.fulfilled;
-      }
-      if (password.contains(RegExp(r'[A-Z]')) == false) {
-        passwordIsValid = false;
-        passwordContainsUpperLetter.status = PasswordCheckerStatus.notFulfilled;
-      } else {
-        passwordContainsUpperLetter.status = PasswordCheckerStatus.fulfilled;
-      }
-
-      if (password.contains(RegExp(r'[0-9]')) == false) {
-        passwordIsValid = false;
-        passwordContainsNumericDigit.status =
-            PasswordCheckerStatus.notFulfilled;
-      } else {
-        passwordContainsNumericDigit.status = PasswordCheckerStatus.fulfilled;
-      }
-
-      if (!password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
-        passwordIsValid = false;
-        passwordContainsSpecialCharacter.status =
-            PasswordCheckerStatus.notFulfilled;
-      } else {
-        passwordContainsSpecialCharacter.status =
-            PasswordCheckerStatus.fulfilled;
-      }
-    });
-    //  if isValidPassword made it to this point without being changed to false, then it's still true
-    //hence, the password is valid
-    return passwordIsValid;
-  }
 }

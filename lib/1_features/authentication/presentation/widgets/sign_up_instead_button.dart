@@ -6,7 +6,8 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/buttons/text_button_widget.dart';
 
 class SignUpInsteadButton extends StatelessWidget {
-  const SignUpInsteadButton({super.key});
+  final Function() onTap;
+  const SignUpInsteadButton({super.key, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +24,7 @@ class SignUpInsteadButton extends StatelessWidget {
             textStyle: AppTextStyles.bodySmallTextStyle16
                 .copyWith(fontWeight: FontWeight.w700),
             textColors: AppColors.textPrimaryColor,
-            onTap: () {
-              Navigator.of(context).pushReplacementNamed(Routes.signUpRoute);
-            }),
+            onTap: onTap),
       ],
     );
   }

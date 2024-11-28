@@ -1,8 +1,6 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../app_constants/app_images.dart';
 import '../../app_constants/app_measures.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_theme.dart';
@@ -82,11 +80,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
               prefixIcon: Padding(
                 padding: const EdgeInsets.symmetric(
                     horizontal: AppMeasures.mediumPadding12 * 1.2),
-                child: SvgPicture.asset(
-                  AppImages.searchIconSVG,
-                  width: 18,
-                  height: 18,
-                ),
+                child: Icon(Icons.search),
               ),
             ),
           ),

@@ -1,19 +1,12 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hediety/1_features/authentication/presentation/manager/authentication_op/authentication_op_cubit.dart';
 import '../../../../core/config/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/buttons/button_widget.dart';
-import '../../../../core/widgets/buttons/text_button_widget.dart';
 import '../../../../core/widgets/text_fields/text_field.dart';
 import 'dart:io' show Platform;
-
-import '../../auth_utility_functions/auth_input_validator.dart';
-import '../manager/authentication_cubit/authentication_cubit.dart';
-import '../widgets/continue_with_apple_button.dart';
-import '../widgets/continue_with_google_button.dart';
-import '../widgets/or_divider.dart';
 import '../widgets/sign_up_instead_button.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -86,8 +79,8 @@ class _SignInScreenState extends State<SignInScreen> {
                         labelText: 'Email',
                         //S.of(context).email,
                         textController: emailController,
-                        validator: (value) => AuthInputValidator
-                            .validateEmailAndReturnErrorMessage(value ?? ''),
+                        // validator: (value) => AuthInputValidator
+                        //     .validateEmailAndReturnErrorMessage(value ?? ''),
                       ),
                     ),
                     Padding(
@@ -97,8 +90,8 @@ class _SignInScreenState extends State<SignInScreen> {
                         //S.of(context).password,
                         isHiddenByDefault: true,
                         textController: passwordController,
-                        validator: (value) => AuthInputValidator
-                            .validatePasswordAndReturnErrorMessage(value ?? ''),
+                        // validator: (value) => AuthInputValidator
+                        //     .validatePasswordAndReturnErrorMessage(value ?? ''),
                       ),
                     ),
                   ],
@@ -115,7 +108,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     ButtonWidget(
                       onPressed: () {
                         if (_signInFormKey.currentState?.validate() ?? false) {}
-                        BlocProvider.of<AuthenticationCubit>(context)
+                        BlocProvider.of<AuthenticationOpCubit>(context)
                             .signInWithEmailAndPassword(
                                 email: emailController.text,
                                 password: passwordController.text)
@@ -130,23 +123,28 @@ class _SignInScreenState extends State<SignInScreen> {
                       },
                       text: 'Login',
                     ),
-                    const OrDivider(),
-                    (Platform.isIOS == false)
-                        ? Container()
-                        : const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 10),
-                            child: ContinueWithAppleButton(),
-                          ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10),
-                      child: ContinueWithGoogleButton(),
-                    ),
-                    const Row(
+                    // const OrDivider(),
+                    // (Platform.isIOS == false)
+                    //     ? Container()
+                    //     : const Padding(
+                    //         padding: EdgeInsets.symmetric(vertical: 10),
+                    //         child: ContinueWithAppleButton(),
+                    //       ),
+                    // const Padding(
+                    //   padding: EdgeInsets.symmetric(vertical: 10),
+                    //   child: ContinueWithGoogleButton(),
+                    // ),
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Padding(
                           padding: EdgeInsets.all(20),
-                          child: SignUpInsteadButton(),
+                          child: SignUpInsteadButton(
+                            onTap: () {
+                              Navigator.of(context)
+                                  .pushReplacementNamed(Routes.signUpRoute);
+                            },
+                          ),
                         ),
                       ],
                     ),
@@ -159,5 +157,4 @@ class _SignInScreenState extends State<SignInScreen> {
       ),
     );
   }
-
 }

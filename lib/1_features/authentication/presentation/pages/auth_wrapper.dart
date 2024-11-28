@@ -7,9 +7,12 @@ import '../manager/authentication_cubit/authentication_cubit.dart';
 
 class AuthWrapper extends StatefulWidget {
   final Widget homeScreen;
+  final Widget signInScreen;
+
   const AuthWrapper({
     super.key,
     required this.homeScreen,
+    required this.signInScreen
   });
   @override
   State<AuthWrapper> createState() => _AuthWrapperState();
@@ -47,7 +50,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
           //       ModalRoute.withName(Routes.authWrapper));
           // });
 
-          return const SignInScreen();
+          return widget.signInScreen;
         }
       },
     );
