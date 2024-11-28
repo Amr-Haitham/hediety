@@ -1,10 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../../core/config/firestore_collection.dart';
 import '../firestore/general_firebase_OPs/general_crud_firestore.dart';
 import '../models/app_user.dart';
 
 class AppUserRepo {
   final GeneralCrudFirestore _generalCrudFirestore = GeneralCrudFirestore();
-
+  final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   Future<void> setSingleAppUser(AppUser appUser) {
     return _generalCrudFirestore.generalSetdocInAppCollection(
         FirestoreCollectionNames.usersCollection, appUser.id, appUser.toMap());
@@ -16,42 +18,25 @@ class AppUserRepo {
     return AppUser.fromMap(data.data() as Map<String, dynamic>);
   }
 
-  Future<void> updateFavouriteBoardIdsForSingleAppUser(
-      {required String uid, required List<String> favouriteBoardsIds}) {
-    return _generalCrudFirestore.generalUpdatedocInAppCollection(
-        collectionName: FirestoreCollectionNames.usersCollection,
-        docId: uid,
-        docData: {"favouriteBoardsIds": favouriteBoardsIds});
+  Future<List<AppUser>> getAppUsersFromIds({required List<String> ids}) async {
+    var snapshots = await _firebaseFirestore
+        .collection(FirestoreCollectionNames.usersCollection)
+        .where("id", whereIn: ids)
+        .get();
+
+    List<AppUser> users = [];
+    for (var doc in snapshots.docs) {
+      users.add(AppUser.fromMap(doc.data()));
+    }
+    return users;
   }
+
   Future<void> updateFcmTokenForSingleAppUser(
       {required String uid, required String fcmToken}) {
     return _generalCrudFirestore.generalUpdatedocInAppCollection(
         collectionName: FirestoreCollectionNames.usersCollection,
         docId: uid,
         docData: {"fcmToken": fcmToken});
-  }
-
-  Future<void> updateRecentSearchedPlaceIdForSingleAppUser(
-      {required String uid, required List<String> recentSearchedPlaceIds}) {
-    return _generalCrudFirestore.generalUpdatedocInAppCollection(
-        collectionName: FirestoreCollectionNames.usersCollection,
-        docId: uid,
-        docData: {"recentSearchedPlaceIds": recentSearchedPlaceIds});
-  }
-  Future<void> updateCountryForSingleAppUser(
-      {required String uid, required String countryCode}) {
-    return _generalCrudFirestore.generalUpdatedocInAppCollection(
-        collectionName: FirestoreCollectionNames.usersCollection,
-        docId: uid,
-        docData: {"companyBaseCountryCode": countryCode});
-  }
-
-  Future<void> updatePreviouslyBookedBoardsIdsForSingleAppUser(
-      {required String uid, required List<String> previouslyBookedBoardsIds}) {
-    return _generalCrudFirestore.generalUpdatedocInAppCollection(
-        collectionName: FirestoreCollectionNames.usersCollection,
-        docId: uid,
-        docData: {"previouslyBookedBoardsIds": previouslyBookedBoardsIds});
   }
 
   Future<void> deleteSingleAppUser(String uid) async {
