@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hediety/1_features/list_management_feature/1_presentation/list_management_screen.dart';
-import 'package:hediety/1_features/my_lists_screen/1_presentation/my_lists_screen.dart';
-import 'package:hediety/1_features/pledged_by_me_feature/1_presentation/pledged_by_me_screen.dart';
-import 'package:hediety/2_global_bloc_layer/app_user_blocs/get_app_user_cubit/get_app_user_cubit.dart';
-import 'package:hediety/2_global_bloc_layer/app_user_blocs/set_app_user_cubit/set_app_user_cubit.dart';
-import '../../1_features/add_item_screen/1_presentation/add_item_screen.dart';
-import '../../1_features/authentication/presentation/manager/authentication_cubit/authentication_cubit.dart';
-import '../../1_features/authentication/presentation/manager/authentication_op/authentication_op_cubit.dart';
-import '../../1_features/authentication/presentation/pages/auth_wrapper.dart';
-import '../../1_features/authentication/presentation/pages/sign_in_screen.dart';
-import '../../1_features/authentication/presentation/pages/sign_up_screen.dart';
-import '../../1_features/home_screen/1_presentation/home_screen.dart';
-import '../../1_features/notifications_screen/notifications_screen.dart';
-import '../../1_features/profile_feature/1_presentation/profile_screen.dart';
+import 'package:hediety/1_view/list_management_feature/1_presentation/list_management_screen.dart';
+import 'package:hediety/1_view/my_lists_screen/1_presentation/my_lists_screen.dart';
+import 'package:hediety/1_view/pledged_by_me_feature/1_presentation/pledged_by_me_screen.dart';
+import 'package:hediety/2_controller/app_user_blocs/get_app_user_cubit/get_app_user_cubit.dart';
+import 'package:hediety/2_controller/app_user_blocs/set_app_user_cubit/set_app_user_cubit.dart';
+import '../../1_view/add_item_screen/1_presentation/add_item_screen.dart';
+import '../../1_view/authentication/presentation/manager/authentication_cubit/authentication_cubit.dart';
+import '../../1_view/authentication/presentation/manager/authentication_op/authentication_op_cubit.dart';
+import '../../1_view/authentication/presentation/pages/auth_wrapper.dart';
+import '../../1_view/authentication/presentation/pages/sign_in_screen.dart';
+import '../../1_view/authentication/presentation/pages/sign_up_screen.dart';
+import '../../1_view/home_screen/1_presentation/home_screen.dart';
+import '../../1_view/notifications_screen/notifications_screen.dart';
+import '../../1_view/profile_feature/1_presentation/profile_screen.dart';
 
 class Routes {
   // static const String rootRoute = '/';

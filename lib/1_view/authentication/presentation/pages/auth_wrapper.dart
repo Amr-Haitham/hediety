@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hediety/1_features/authentication/presentation/pages/sign_in_screen.dart';
+import 'package:hediety/1_view/authentication/presentation/pages/sign_in_screen.dart';
 
 import '../manager/authentication_cubit/authentication_cubit.dart';
 

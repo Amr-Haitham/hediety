@@ -4,11 +4,11 @@ import 'package:country_codes/country_codes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hediety/1_features/authentication/presentation/manager/authentication_op/authentication_op_cubit.dart';
+import 'package:hediety/1_view/authentication/presentation/manager/authentication_op/authentication_op_cubit.dart';
 import 'package:intl_phone_number_field/intl_phone_number_field.dart';
 
-import '../../../../2_global_bloc_layer/app_user_blocs/set_app_user_cubit/set_app_user_cubit.dart';
-import '../../../../3_global_data_layer/models/app_user.dart';
+import '../../../../2_controller/app_user_blocs/set_app_user_cubit/set_app_user_cubit.dart';
+import '../../../../3_model/models/app_user.dart';
 import '../../../../core/config/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
