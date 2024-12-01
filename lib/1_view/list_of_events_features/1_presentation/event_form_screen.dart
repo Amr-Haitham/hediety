@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hediety/2_controller/events/set_event/set_event_cubit.dart';
+import 'package:hediety/core/utils/auth_utils.dart';
 
 import '../../../3_model/models/event.dart';
 
@@ -19,7 +20,6 @@ class _EventFormScreenState extends State<EventFormScreen> {
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _userIdController = TextEditingController();
 
   @override
   void initState() {
@@ -29,7 +29,6 @@ class _EventFormScreenState extends State<EventFormScreen> {
       _dateController.text = widget.event!.date;
       _locationController.text = widget.event!.location;
       _descriptionController.text = widget.event!.description;
-      _userIdController.text = widget.event!.userId.toString();
     }
   }
 
@@ -41,7 +40,7 @@ class _EventFormScreenState extends State<EventFormScreen> {
         date: _dateController.text,
         location: _locationController.text,
         description: _descriptionController.text,
-        userId: int.parse(_userIdController.text),
+        userId: AuthUtils.getCurrentUserUid(),
       );
       BlocProvider.of<SetEventCubit>(context).setEvent(newEvent);
       Navigator.pop(context, newEvent); // Returns the Event object.
@@ -104,20 +103,20 @@ class _EventFormScreenState extends State<EventFormScreen> {
                 },
               ),
               const SizedBox(height: 10),
-              TextFormField(
-                controller: _userIdController,
-                decoration: const InputDecoration(labelText: 'User ID'),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a user ID';
-                  }
-                  if (int.tryParse(value) == null) {
-                    return 'User ID must be a number';
-                  }
-                  return null;
-                },
-              ),
+              // TextFormField(
+              //   controller: _userIdController,
+              //   decoration: const InputDecoration(labelText: 'User ID'),
+              //   keyboardType: TextInputType.number,
+              //   validator: (value) {
+              //     if (value == null || value.isEmpty) {
+              //       return 'Please enter a user ID';
+              //     }
+              //     if (int.tryParse(value) == null) {
+              //       return 'User ID must be a number';
+              //     }
+              //     return null;
+              //   },
+              // ),
               const Spacer(),
               ElevatedButton(
                 onPressed: _handleSubmit,

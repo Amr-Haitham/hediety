@@ -4,7 +4,7 @@ class Event {
   final String date;
   final String location;
   final String description;
-  final int userId;
+  final String userId;
 
   Event({
     required this.id,

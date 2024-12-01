@@ -25,7 +25,7 @@ class ProfileScreen extends StatelessWidget {
                 RedButton(
                     label: "My lists",
                     onPressed: () {
-                      Navigator.pushNamed(context, Routes.myListsScreenRoute);
+                      Navigator.pushNamed(context, Routes.myEventsScreenRoute);
                     }),
                 const SizedBox(height: 16),
                 RedButton(

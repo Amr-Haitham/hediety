@@ -28,8 +28,8 @@ class Routes {
   static const String signUpRoute = 'sign_up_screen_route';
   static const String profileScreenRoute = 'profile_screen_route';
   static const String giftsListScreenRoute = 'gifts_list_screen_route';
-  static const String addEventScreenRoute = 'add_event_screen_route';
-  static const String myListsScreenRoute = 'my_lists_screen_route';
+  static const String eventFormScreenRoute = 'event_form_screen_route';
+  static const String myEventsScreenRoute = 'my_events_screen_route';
   static const String addGiftsScreenRoute = 'add_gifts_screen_route';
   static const String pledgedByMeScreenRoute = 'pledged_by_me_screen_route';
   static const String notificationsScreenRoute = 'notificaitons_screen_route';
@@ -38,8 +38,8 @@ class Routes {
 class AppRouter {
   //AppRouter._();
 
-  final GetAppUserCubit _getAppUserCubit = GetAppUserCubit();
-  final AuthenticationCubit _authenticationCubit = AuthenticationCubit();
+  final SetEventCubit _setEventCubit = SetEventCubit();
+  // final DeleteEventCubit _deleteEventCubit = DeleteEventCubit();
   // Widget initialRoute = const OnboardingScreen();
   // //
   // void setInitialRouteToLandingScreen() {
@@ -76,12 +76,6 @@ class AppRouter {
                     ),
                   ),
                 ));
-      case Routes.addEventScreenRoute:
-        Event? event = settings.arguments as Event?;
-        return MaterialPageRoute(
-            builder: (context) => EventFormScreen(
-                  event: event,
-                ));
 
       case Routes.signUpRoute:
         return MaterialPageRoute(
@@ -105,15 +99,15 @@ class AppRouter {
             builder: (context) => ListManagementScreen(
                   event: event,
                 ));
-      case Routes.myListsScreenRoute:
+      case Routes.myEventsScreenRoute:
         return MaterialPageRoute(
             builder: (context) => MultiBlocProvider(
                   providers: [
                     BlocProvider(
                       create: (context) => GetUserEventsCubit(),
                     ),
-                    BlocProvider(
-                      create: (context) => SetEventCubit(),
+                    BlocProvider.value(
+                      value: _setEventCubit,
                     ),
                     BlocProvider(
                       create: (context) => DeleteEventCubit(),
@@ -121,6 +115,17 @@ class AppRouter {
                   ],
                   child: MyEventsScreen(),
                 ));
+
+      case Routes.eventFormScreenRoute:
+        Event? event = settings.arguments as Event?;
+        return MaterialPageRoute(
+            builder: (context) => BlocProvider.value(
+                  value: _setEventCubit,
+                  child: EventFormScreen(
+                    event: event,
+                  ),
+                ));
+
       case Routes.addGiftsScreenRoute:
         return MaterialPageRoute(
             builder: (context) => const AddItemScreen(

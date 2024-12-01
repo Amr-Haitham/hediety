@@ -82,7 +82,7 @@ class _MyEventsScreenState extends State<MyEventsScreen> {
                           },
                           onEdit: () {
                             Navigator.pushNamed(
-                                context, Routes.addEventScreenRoute,
+                                context, Routes.eventFormScreenRoute,
                                 arguments: state.events[index]);
                           },
                           onPressed: () {
@@ -182,7 +182,7 @@ class AddButton extends StatelessWidget {
           ),
         ),
         onPressed: () {
-          // Handle add button action
+          Navigator.pushNamed(context, Routes.eventFormScreenRoute);
         },
         child: const Text(
           "Add",
