@@ -1,15 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hediety/2_controller/gifts_blocs/get_gifts_for_event/get_gifts_for_event_cubit.dart';
 
 import '../../../3_model/models/event.dart';
 import '../../../core/config/app_router.dart';
 
-class ListManagementScreen extends StatelessWidget {
+class GiftsListScreen extends StatefulWidget {
   final Event event;
 
-  const ListManagementScreen({
-    Key? key,
-    required this.event
-  }) : super(key: key);
+  const GiftsListScreen({Key? key, required this.event}) : super(key: key);
+
+  @override
+  State<GiftsListScreen> createState() => _GiftsListScreenState();
+}
+
+class _GiftsListScreenState extends State<GiftsListScreen> {
+  @override
+  void initState() {
+    BlocProvider.of<GetGiftsForEventCubit>(context)
+        .getGiftsForEvent(eventId: widget.event.id);
+        
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +38,7 @@ class ListManagementScreen extends StatelessWidget {
         title: Column(
           children: [
             Text(
-              event.name,
+              widget.event.name,
               style: const TextStyle(
                   color: Colors.black,
                   fontSize: 18,
@@ -34,7 +46,7 @@ class ListManagementScreen extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              event.date.toString(),
+              widget.event.date.toString(),
               style: const TextStyle(color: Colors.grey, fontSize: 14),
             ),
           ],

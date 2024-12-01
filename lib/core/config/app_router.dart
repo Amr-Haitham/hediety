@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hediety/1_view/list_management_feature/1_presentation/list_management_screen.dart';
+import 'package:hediety/1_view/list_management_feature/1_presentation/gifts_list_screen.dart';
 import 'package:hediety/1_view/list_of_events_features/1_presentation/event_form_screen.dart';
 import 'package:hediety/1_view/list_of_events_features/1_presentation/my_events_screen.dart';
 import 'package:hediety/1_view/pledged_by_me_feature/1_presentation/pledged_by_me_screen.dart';
@@ -9,6 +9,7 @@ import 'package:hediety/2_controller/app_user_blocs/set_app_user_cubit/set_app_u
 import 'package:hediety/2_controller/events/delete_event/delete_event_cubit.dart';
 import 'package:hediety/2_controller/events/get_user_events/get_user_events_cubit.dart';
 import 'package:hediety/2_controller/events/set_event/set_event_cubit.dart';
+import 'package:hediety/2_controller/gifts_blocs/get_gifts_for_event/get_gifts_for_event_cubit.dart';
 import 'package:hediety/3_model/models/event.dart';
 import '../../1_view/add_item_screen/1_presentation/add_item_screen.dart';
 import '../../1_view/authentication/presentation/manager/authentication_cubit/authentication_cubit.dart';
@@ -96,8 +97,11 @@ class AppRouter {
       case Routes.giftsListScreenRoute:
         Event event = settings.arguments as Event;
         return MaterialPageRoute(
-            builder: (context) => ListManagementScreen(
-                  event: event,
+            builder: (context) => BlocProvider(
+                  create: (context) => GetGiftsForEventCubit(),
+                  child: GiftsListScreen(
+                    event: event,
+                  ),
                 ));
       case Routes.myEventsScreenRoute:
         return MaterialPageRoute(

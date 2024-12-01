@@ -9,9 +9,13 @@ import '../models/event.dart';
 class GiftsRepo {
   final GeneralCrudFirestore _generalCrudFirestore = GeneralCrudFirestore();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  setEvent({required Gift gift}) {
+  setGift({required Gift gift}) {
     return _generalCrudFirestore.generalSetdocInAppCollection(
         FirestoreCollectionNames.giftsCollection, gift.id, gift.toMap());
+  }
+  deleteGift({required String giftId}) {
+    return _generalCrudFirestore.generalDeletedocInAppCollection(
+        FirestoreCollectionNames.giftsCollection, giftId);
   }
 
   Future<List<Gift>> getAllGiftsForEvent({required String eventId}) async {

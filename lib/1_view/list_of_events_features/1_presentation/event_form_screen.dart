@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hediety/2_controller/events/set_event/set_event_cubit.dart';
 import 'package:hediety/core/utils/auth_utils.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../../3_model/models/event.dart';
 
@@ -35,7 +36,7 @@ class _EventFormScreenState extends State<EventFormScreen> {
   void _handleSubmit() {
     if (_formKey.currentState!.validate()) {
       final newEvent = Event(
-        id: widget.event?.id ?? UniqueKey().toString(),
+        id: widget.event?.id ?? Uuid().v1(),
         name: _nameController.text,
         date: _dateController.text,
         location: _locationController.text,
