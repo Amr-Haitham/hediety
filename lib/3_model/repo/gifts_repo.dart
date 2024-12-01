@@ -6,7 +6,7 @@ import 'package:hediety/core/config/firestore_collection.dart';
 
 import '../models/event.dart';
 
-class EventsRepo {
+class GiftsRepo {
   final GeneralCrudFirestore _generalCrudFirestore = GeneralCrudFirestore();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   setEvent({required Gift gift}) {

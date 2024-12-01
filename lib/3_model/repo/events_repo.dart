@@ -13,6 +13,11 @@ class EventsRepo {
         FirestoreCollectionNames.eventsCollection, event.id, event.toMap());
   }
 
+  deleteEvent({required String eventId}) {
+    return _generalCrudFirestore.generalDeletedocInAppCollection(
+        FirestoreCollectionNames.eventsCollection, eventId);
+  }
+
   Future<List<Event>> getAllEventsForAppUser({required String uid}) async {
     var snapshot = await _firestore
         .collection(FirestoreCollectionNames.eventsCollection)

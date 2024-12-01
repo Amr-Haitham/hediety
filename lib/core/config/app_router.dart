@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hediety/1_view/list_management_feature/1_presentation/list_management_screen.dart';
-import 'package:hediety/1_view/my_lists_screen/1_presentation/my_lists_screen.dart';
+import 'package:hediety/1_view/list_of_events_features/1_presentation/event_form_screen.dart';
+import 'package:hediety/1_view/list_of_events_features/1_presentation/my_events_screen.dart';
 import 'package:hediety/1_view/pledged_by_me_feature/1_presentation/pledged_by_me_screen.dart';
 import 'package:hediety/2_controller/app_user_blocs/get_app_user_cubit/get_app_user_cubit.dart';
 import 'package:hediety/2_controller/app_user_blocs/set_app_user_cubit/set_app_user_cubit.dart';
+import 'package:hediety/2_controller/events/delete_event/delete_event_cubit.dart';
+import 'package:hediety/2_controller/events/get_user_events/get_user_events_cubit.dart';
+import 'package:hediety/2_controller/events/set_event/set_event_cubit.dart';
+import 'package:hediety/3_model/models/event.dart';
 import '../../1_view/add_item_screen/1_presentation/add_item_screen.dart';
 import '../../1_view/authentication/presentation/manager/authentication_cubit/authentication_cubit.dart';
 import '../../1_view/authentication/presentation/manager/authentication_op/authentication_op_cubit.dart';
@@ -22,10 +27,10 @@ class Routes {
   // static const String signInRoute = 'sign_in_screen_route';
   static const String signUpRoute = 'sign_up_screen_route';
   static const String profileScreenRoute = 'profile_screen_route';
-  static const String listManagementScreenRoute =
-      'list_management_screen_route';
+  static const String giftsListScreenRoute = 'gifts_list_screen_route';
+  static const String addEventScreenRoute = 'add_event_screen_route';
   static const String myListsScreenRoute = 'my_lists_screen_route';
-  static const String addItemsScreenRoute = 'add_items_screen_route';
+  static const String addGiftsScreenRoute = 'add_gifts_screen_route';
   static const String pledgedByMeScreenRoute = 'pledged_by_me_screen_route';
   static const String notificationsScreenRoute = 'notificaitons_screen_route';
 }
@@ -67,9 +72,15 @@ class AppRouter {
                     homeScreen: HomeScreen(),
                     signInScreen: BlocProvider(
                       create: (context) => AuthenticationOpCubit(),
-                      child: SignInScreen(),
+                      child: const SignInScreen(),
                     ),
                   ),
+                ));
+      case Routes.addEventScreenRoute:
+        Event? event = settings.arguments as Event?;
+        return MaterialPageRoute(
+            builder: (context) => EventFormScreen(
+                  event: event,
                 ));
 
       case Routes.signUpRoute:
@@ -88,17 +99,31 @@ class AppRouter {
 
       case Routes.profileScreenRoute:
         return MaterialPageRoute(builder: (context) => ProfileScreen());
-      case Routes.listManagementScreenRoute:
+      case Routes.giftsListScreenRoute:
+        Event event = settings.arguments as Event;
         return MaterialPageRoute(
             builder: (context) => ListManagementScreen(
-                  listTitle: 'My birthday',
-                  listDate: '2023-01-01',
+                  event: event,
                 ));
       case Routes.myListsScreenRoute:
-        return MaterialPageRoute(builder: (context) => MyListsScreen());
-      case Routes.addItemsScreenRoute:
         return MaterialPageRoute(
-            builder: (context) => AddItemScreen(
+            builder: (context) => MultiBlocProvider(
+                  providers: [
+                    BlocProvider(
+                      create: (context) => GetUserEventsCubit(),
+                    ),
+                    BlocProvider(
+                      create: (context) => SetEventCubit(),
+                    ),
+                    BlocProvider(
+                      create: (context) => DeleteEventCubit(),
+                    ),
+                  ],
+                  child: MyEventsScreen(),
+                ));
+      case Routes.addGiftsScreenRoute:
+        return MaterialPageRoute(
+            builder: (context) => const AddItemScreen(
                   listTitle: "My birthday",
                 ));
       case Routes.pledgedByMeScreenRoute:

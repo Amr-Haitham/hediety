@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 
+import '../../../3_model/models/event.dart';
 import '../../../core/config/app_router.dart';
 
 class ListManagementScreen extends StatelessWidget {
-  final String listTitle;
-  final String listDate;
+  final Event event;
 
   const ListManagementScreen({
     Key? key,
-    required this.listTitle,
-    required this.listDate,
+    required this.event
   }) : super(key: key);
 
   @override
@@ -27,7 +26,7 @@ class ListManagementScreen extends StatelessWidget {
         title: Column(
           children: [
             Text(
-              listTitle,
+              event.name,
               style: const TextStyle(
                   color: Colors.black,
                   fontSize: 18,
@@ -35,7 +34,7 @@ class ListManagementScreen extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              listDate,
+              event.date.toString(),
               style: const TextStyle(color: Colors.grey, fontSize: 14),
             ),
           ],
@@ -73,14 +72,14 @@ class ListManagementScreen extends StatelessWidget {
                   const SizedBox(height: 20),
                   AddButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, Routes.addItemsScreenRoute);
+                      Navigator.pushNamed(context, Routes.addGiftsScreenRoute);
                     },
                   ),
                 ],
               ),
             ),
           ),
-          const ActionButtons(),
+          // const ActionButtons(),
         ],
       ),
     );
@@ -134,55 +133,6 @@ class AddButton extends StatelessWidget {
           "Add",
           style: TextStyle(color: Colors.white, fontSize: 16),
         ),
-      ),
-    );
-  }
-}
-
-class ActionButtons extends StatelessWidget {
-  const ActionButtons({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          OutlinedButton(
-            style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.red,
-              side: const BorderSide(color: Colors.red),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            ),
-            onPressed: () {
-              // Handle edit action
-            },
-            child: const Text("Edit"),
-          ),
-          OutlinedButton(
-            style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.red,
-              side: const BorderSide(color: Colors.red),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            ),
-            onPressed: () {
-              // Handle share action
-            },
-            child: const Text("Share"),
-          ),
-          OutlinedButton(
-            style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.red,
-              side: const BorderSide(color: Colors.red),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            ),
-            onPressed: () {
-              // Handle delete action
-            },
-            child: const Text("Delete"),
-          ),
-        ],
       ),
     );
   }
