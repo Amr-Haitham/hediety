@@ -1,11 +1,13 @@
+enum GiftStatus { pledged, unpledged, done }
 class Gift {
   final String id;
   final String name;
   final String description;
   final String category;
   final double price;
-  final String status;
-  final int eventId;
+  final GiftStatus status;
+  final String eventId;
+  final String? imageUrl;
 
   Gift({
     required this.id,
@@ -15,6 +17,7 @@ class Gift {
     required this.price,
     required this.status,
     required this.eventId,
+    required this.imageUrl
   });
 
   // Convert Gift to Map
@@ -25,8 +28,9 @@ class Gift {
       'description': description,
       'category': category,
       'price': price,
-      'status': status,
+      'status': status.index,
       'eventId': eventId,
+      'imageUrl': imageUrl
     };
   }
 
@@ -38,8 +42,9 @@ class Gift {
       description: map['description'],
       category: map['category'],
       price: map['price'],
-      status: map['status'],
+      status: GiftStatus.values[map['status']],
       eventId: map['eventId'],
+      imageUrl: map['imageUrl'],
     );
   }
 }
