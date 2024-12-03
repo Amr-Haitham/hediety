@@ -8,7 +8,7 @@ import 'package:hediety/1_view/authentication/presentation/manager/authenticatio
 import 'package:intl_phone_number_field/intl_phone_number_field.dart';
 
 import '../../../../2_controller/app_user_blocs/set_app_user_cubit/set_app_user_cubit.dart';
-import '../../../../3_model/models/app_user.dart';
+import '../../../../3_data_layer/models/app_user.dart';
 import '../../../../core/config/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';

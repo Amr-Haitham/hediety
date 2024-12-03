@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:hediety/core/config/app_router.dart';
 import 'package:hediety/firebase_options.dart';
 
+import '1_view/dummy_pick_image/dummy_pick_image.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -20,6 +22,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      // home: ImagePickerExample(),
       onGenerateRoute: _appRouter.generateRoute,
     );
   }

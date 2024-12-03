@@ -4,7 +4,7 @@ import 'package:hediety/2_controller/events/set_event/set_event_cubit.dart';
 import 'package:hediety/core/utils/auth_utils.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../3_model/models/event.dart';
+import '../../../3_data_layer/models/event.dart';
 
 class EventFormScreen extends StatefulWidget {
   final Event? event;

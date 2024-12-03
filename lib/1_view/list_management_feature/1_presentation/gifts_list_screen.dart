@@ -4,7 +4,7 @@ import 'package:hediety/2_controller/gifts_blocs/delete_gift_for_event/delete_gi
 import 'package:hediety/2_controller/gifts_blocs/get_gifts_for_event/get_gifts_for_event_cubit.dart';
 import 'package:hediety/2_controller/gifts_blocs/set_gift_for_event/set_gift_for_event_cubit.dart';
 
-import '../../../3_model/models/event.dart';
+import '../../../3_data_layer/models/event.dart';
 import '../../../core/config/app_router.dart';
 
 class GiftsListScreen extends StatefulWidget {

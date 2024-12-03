@@ -1,9 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hediety/3_model/models/event.dart';
+import 'package:hediety/3_data_layer/models/event.dart';
 import 'package:meta/meta.dart';
 
-import '../../../3_model/repo/events_repo.dart';
+import '../../../3_data_layer/repo/events_repo.dart';
 
 part 'get_user_events_state.dart';
 

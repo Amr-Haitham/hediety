@@ -39,10 +39,6 @@ class AppUser {
         fcmToken: map['fcmToken'] as String?);
   }
 
-  String toJson() => json.encode(toMap());
-
-  factory AppUser.fromJson(String source) =>
-      AppUser.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hediety/3_model/firestore/general_firebase_OPs/general_crud_firestore.dart';
-import 'package:hediety/3_model/models/app_user.dart';
-import 'package:hediety/3_model/models/gift.dart';
+import 'package:hediety/3_data_layer/firestore/general_firebase_OPs/general_crud_firestore.dart';
+import 'package:hediety/3_data_layer/models/app_user.dart';
+import 'package:hediety/3_data_layer/models/gift.dart';
 import 'package:hediety/core/config/firestore_collection.dart';
 
 import '../models/event.dart';

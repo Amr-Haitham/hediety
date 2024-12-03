@@ -13,20 +13,21 @@ class AppUserRepo {
   }
 
   Future<AppUser> getSingleAppUser(String uid) async {
-    var data = await _generalCrudFirestore.generalGetdocInAppCollection(
-        FirestoreCollectionNames.usersCollection, uid);
-    return AppUser.fromMap(data.data() as Map<String, dynamic>);
+    DocumentSnapshot snapshot =
+        await _generalCrudFirestore.generalGetdocInAppCollection(
+            FirestoreCollectionNames.usersCollection, uid);
+    return AppUser.fromMap(snapshot.data() as Map<String, dynamic>);
   }
 
   Future<List<AppUser>> getAppUsersFromIds({required List<String> ids}) async {
-    var snapshots = await _firebaseFirestore
+    QuerySnapshot snapshots = await _firebaseFirestore
         .collection(FirestoreCollectionNames.usersCollection)
         .where("id", whereIn: ids)
         .get();
-
     List<AppUser> users = [];
+
     for (var doc in snapshots.docs) {
-      users.add(AppUser.fromMap(doc.data()));
+      users.add(AppUser.fromMap(doc.data() as Map<String, dynamic>));
     }
     return users;
   }

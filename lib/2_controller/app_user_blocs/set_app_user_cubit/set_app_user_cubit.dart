@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import '../../../3_model/models/app_user.dart';
-import '../../../3_model/repo/appuser_firestore_repo.dart';
+import '../../../3_data_layer/models/app_user.dart';
+import '../../../3_data_layer/repo/appuser_firestore_repo.dart';
 import '../../../core/consts/constant_text.dart';
 
 part 'set_app_user_state.dart';

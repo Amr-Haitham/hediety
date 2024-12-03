@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hediety/3_model/models/app_user.dart';
-import 'package:hediety/3_model/models/friend.dart';
+import 'package:hediety/3_data_layer/models/app_user.dart';
+import 'package:hediety/3_data_layer/models/friend.dart';
 
 import '../../core/config/firestore_collection.dart';
 import 'appuser_firestore_repo.dart';

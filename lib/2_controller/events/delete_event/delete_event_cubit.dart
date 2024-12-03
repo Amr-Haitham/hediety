@@ -1,9 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
-import '../../../3_model/models/event.dart';
-import '../../../3_model/repo/events_repo.dart';
-import '../../../3_model/repo/gifts_repo.dart';
+import '../../../3_data_layer/models/event.dart';
+import '../../../3_data_layer/repo/events_repo.dart';
+import '../../../3_data_layer/repo/gifts_repo.dart';
 
 part 'delete_event_state.dart';
 

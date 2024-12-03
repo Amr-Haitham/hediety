@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hediety/2_controller/gifts_blocs/set_gift_for_event/set_gift_for_event_cubit.dart';
-import 'package:hediety/3_model/models/gift.dart';
+import 'package:hediety/3_data_layer/models/gift.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../core/utils/ui_utils.dart';

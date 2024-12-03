@@ -3,8 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class GeneralCrudFirestore {
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   //gets a whole collection documents
+
   Future<QuerySnapshot<Map<String, dynamic>>> generalGetCollection(
-      String collectionName) {
+      {required String collectionName}) {
+        
     return _firebaseFirestore.collection(collectionName).get();
   }
 
@@ -72,10 +74,10 @@ class GeneralCrudFirestore {
       required String secondDocId,
       required Map<String, dynamic> docData}) {
     return _firebaseFirestore
-        .collection(firstCollectionName)
-        .doc(firstDocId)
-        .collection(secondCollectionName)
-        .doc(secondDocId)
+        .collection(firstCollectionName)// users
+        .doc(firstDocId) // user id
+        .collection(secondCollectionName) // events
+        .doc(secondDocId) // event id
         .set(docData);
   }
 
