@@ -8,6 +8,7 @@ class AppUser {
   String name;
   String email;
   String phoneNumber;
+  String? imageUrl;
   DateTime joinDate;
   String? fcmToken;
   AppUser(
@@ -16,16 +17,18 @@ class AppUser {
       required this.name,
       required this.email,
       required this.phoneNumber,
+      required this.imageUrl,
       required this.fcmToken});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
       'joinDate': joinDate.millisecondsSinceEpoch,
-     "fcmToken": fcmToken,
+      "fcmToken": fcmToken,
       'name': name,
       'email': email,
-      'phoneNumber': phoneNumber
+      'phoneNumber': phoneNumber,
+      'imageUrl': imageUrl
     };
   }
 
@@ -34,16 +37,14 @@ class AppUser {
         id: map['id'] as String,
         name: map['name'] as String,
         email: map['email'] as String,
+        imageUrl: map['imageUrl'] as String?,
         phoneNumber: map['phoneNumber'] as String,
         joinDate: DateTime.fromMillisecondsSinceEpoch(map['joinDate'] as int),
         fcmToken: map['fcmToken'] as String?);
   }
 
-
   @override
   String toString() {
     return 'AppUser(id: $id, name: $name, email: $email, phoneNumber: $phoneNumber, joinDate: $joinDate, fcmToken: $fcmToken)';
   }
-
-  }
-
+}

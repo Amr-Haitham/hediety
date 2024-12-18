@@ -20,9 +20,24 @@ class AppUserRepo {
   }
 
   Future<List<AppUser>> getAppUsersFromIds({required List<String> ids}) async {
+    if (ids.isEmpty) {
+      return [];
+    }
     QuerySnapshot snapshots = await _firebaseFirestore
         .collection(FirestoreCollectionNames.usersCollection)
         .where("id", whereIn: ids)
+        .get();
+    List<AppUser> users = [];
+
+    for (var doc in snapshots.docs) {
+      users.add(AppUser.fromMap(doc.data() as Map<String, dynamic>));
+    }
+    return users;
+  }
+
+  Future<List<AppUser>> getAllAppUsers() async {
+    QuerySnapshot snapshots = await _firebaseFirestore
+        .collection(FirestoreCollectionNames.usersCollection)
         .get();
     List<AppUser> users = [];
 

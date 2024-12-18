@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hediety/2_controller/get_all_friends/get_all_friends_cubit.dart';
 import 'package:hediety/1_view/authentication/presentation/manager/authentication_op/authentication_op_cubit.dart';
+import 'package:hediety/2_controller/get_latest_events_for_friends/get_latest_events_for_friends_cubit.dart';
 import 'package:hediety/3_data_layer/models/app_user.dart';
 import '../../../../core/config/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -11,41 +13,56 @@ import '../../../../core/widgets/text_fields/text_field.dart';
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+import '../../../3_data_layer/models/event.dart';
+import '../../../gen/assets.gen.dart';
+import '../../../2_controller/get_single_app_user/get_single_appuser_cubit.dart';
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+class HomeScreen extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
-    );
-  }
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class HomeScreen extends StatelessWidget {
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    BlocProvider.of<GetLatestEventsForFriendsCubit>(context)
+        .getLatestEventsForFriends();
+    BlocProvider.of<GetSingleAppuserCubit>(context)
+        .getSingleAppUser(); // Call the cubit to fetch the user data
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,
-        title: GestureDetector(
-          onTap: () {
-            Navigator.pushNamed(context, Routes.profileScreenRoute);
+        title: BlocBuilder<GetSingleAppuserCubit, GetSingleAppuserState>(
+          builder: (context, state) {
+            if (state is GetSingleAppuserLoading) {
+              return const CircularProgressIndicator();
+            } else if (state is GetSingleAppuserError) {
+              return const Text('Error');
+            }
+            var appUser = (state as GetSingleAppuserLoaded).appUser;
+            return GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, Routes.profileScreenRoute);
+              },
+              child: Text(
+                appUser.name,
+                style:
+                    TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+              ),
+            );
           },
-          child: const Text(
-            "Ahmed Mohamed",
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-          ),
         ),
-        leading: const CircleAvatar(
-          backgroundImage: NetworkImage(
-              "https://via.placeholder.com/150"), // Replace with your image URL
+        leading: CircleAvatar(
+          radius: 50,
+          backgroundColor: Colors.transparent,
+          backgroundImage: Assets.images.manSmiling1
+              .provider(), // Replace with your image URL
         ),
         actions: [
           IconButton(
@@ -57,35 +74,51 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
       body: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SearchBar(),
-            const SizedBox(height: 20),
-            CardList(
-              cardsData: [
-                {
-                  'title': "My Birthday",
-                  'name': "Ahmed Sayed",
-                  'date': "22 / 10 / 2024",
-                  'imageUrl': "https://via.placeholder.com/150"
-                },
-                {
-                  'title': "My Birthday",
-                  'name': "Amr Haythem",
-                  'date': "22 / 10 / 2024",
-                  'imageUrl': null
-                },
-                {
-                  'title': "Wedding Party",
-                  'name': "Amr Mohamed",
-                  'date': "22 / 10 / 2024",
-                  'imageUrl': "https://via.placeholder.com/150"
-                },
+        child: BlocBuilder<GetLatestEventsForFriendsCubit,
+            GetLatestEventsForFriendsState>(
+          builder: (context, state) {
+            if (state is GetLatestEventsForFriendsLoading ||
+                state is GetLatestEventsForFriendsInitial) {
+              return const CircularProgressIndicator();
+            }
+            if (state is GetLatestEventsForFriendsError) {
+              return const Text('Error');
+            }
+            var loadedState = state as GetLatestEventsForFriendsLoaded;
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SearchBar(),
+                const SizedBox(height: 20),
+                Expanded(
+                  child: CardList(
+                    cardsData: loadedState.friendToEvent,
+                  ),
+                ),
               ],
-            ),
-          ],
+            );
+          },
         ),
+      ),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          // FloatingActionButton(
+          //   onPressed: () {
+          //     Navigator.pushNamed(context, Routes.eventFormScreenRoute);
+          //   },
+          //   child:  Icon(Icons.),
+          // ),
+          const SizedBox(width: 16),
+          FloatingActionButton(
+            onPressed: () {
+              Navigator.pushNamed(context, Routes.allUsersScreenRoute);
+            },
+            
+            child: const Icon(Icons.contacts),
+          ),
+        ],
       ),
     );
   }
@@ -101,8 +134,6 @@ class SearchBar extends StatefulWidget {
 class _SearchBarState extends State<SearchBar> {
   @override
   Widget build(BuildContext context) {
-
-   
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: TextField(
@@ -122,7 +153,7 @@ class _SearchBarState extends State<SearchBar> {
 }
 
 class CardList extends StatefulWidget {
-  final List<Map<String, dynamic>> cardsData;
+  final Map<AppUser, Event> cardsData;
 
   const CardList({Key? key, required this.cardsData}) : super(key: key);
 
@@ -133,19 +164,30 @@ class CardList extends StatefulWidget {
 class _CardListState extends State<CardList> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: widget.cardsData.map((cardData) {
-        return EventCard(
-          onTap: () {
-            // Navigator.pushNamed(context, Routes.l);
-          },
-          title: cardData['title'],
-          name: cardData['name'],
-          date: cardData['date'],
-          imageUrl: cardData['imageUrl'],
-        );
-      }).toList(),
-    );
+    var allData = widget.cardsData.entries.toList();
+    allData.removeWhere(
+        (element) => element.key.id == FirebaseAuth.instance.currentUser!.uid);
+    return ListView.separated(
+        separatorBuilder: (context, index) => const Divider(
+              thickness: 1,
+              color: Colors.grey,
+            ),
+        itemCount: allData.length,
+        itemBuilder: (context, index) {
+          final cardData = allData.elementAt(index);
+
+          return EventCard(
+            onTap: () {
+              Navigator.pushNamed(context, Routes.giftsListScreenRoute,
+                  arguments: cardData.value);
+            },
+            title: cardData.key.name,
+            name: cardData.key.phoneNumber,
+            date: cardData.value.date.toDate().toString().substring(0, 10),
+            imageUrl: cardData.key.imageUrl,
+            eventName: cardData.value.name,
+          );
+        });
   }
 }
 
@@ -154,6 +196,7 @@ class EventCard extends StatefulWidget {
   final String name;
   final String date;
   final String? imageUrl;
+  final String eventName;
   final Function()? onTap;
 
   const EventCard({
@@ -161,6 +204,7 @@ class EventCard extends StatefulWidget {
     required this.title,
     required this.name,
     required this.onTap,
+    required this.eventName,
     required this.date,
     this.imageUrl,
   }) : super(key: key);
@@ -211,6 +255,10 @@ class _EventCardState extends State<EventCard> {
                       Text(
                         widget.name,
                         style: const TextStyle(fontSize: 16),
+                      ),
+                      Text(
+                        widget.eventName,
+                        style: const TextStyle(color: Colors.black54),
                       ),
                       Text(
                         widget.date,

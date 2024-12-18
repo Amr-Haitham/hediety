@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hediety/2_controller/events/set_event/set_event_cubit.dart';
 import 'package:hediety/core/utils/auth_utils.dart';
+import 'package:hediety/core/widgets/date_picker_widget.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../3_data_layer/models/event.dart';
@@ -18,7 +20,7 @@ class EventFormScreen extends StatefulWidget {
 class _EventFormScreenState extends State<EventFormScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _dateController = TextEditingController();
+  DateTime? selectedDate;
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
@@ -27,7 +29,7 @@ class _EventFormScreenState extends State<EventFormScreen> {
     super.initState();
     if (widget.event != null) {
       _nameController.text = widget.event!.name;
-      _dateController.text = widget.event!.date;
+      // _dateController.text = widget.event!.date;
       _locationController.text = widget.event!.location;
       _descriptionController.text = widget.event!.description;
     }
@@ -38,12 +40,13 @@ class _EventFormScreenState extends State<EventFormScreen> {
       final newEvent = Event(
         id: widget.event?.id ?? Uuid().v1(),
         name: _nameController.text,
-        date: _dateController.text,
+        date: Timestamp.fromDate(selectedDate ?? DateTime.now()),
         location: _locationController.text,
         description: _descriptionController.text,
         userId: AuthUtils.getCurrentUserUid(),
       );
       BlocProvider.of<SetEventCubit>(context).setEvent(newEvent);
+
       Navigator.pop(context, newEvent); // Returns the Event object.
     }
   }
@@ -71,16 +74,24 @@ class _EventFormScreenState extends State<EventFormScreen> {
                 },
               ),
               const SizedBox(height: 10),
-              TextFormField(
-                controller: _dateController,
-                decoration: const InputDecoration(labelText: 'Date'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a date';
-                  }
-                  return null;
+              DatePickerFieldWidget(
+                label: "enter event date",
+                onDateSelected: (seletedDate) {
+                  selectedDate = seletedDate;
+                  setState(() {});
                 },
-              ),
+              )
+              // TextFormField(
+              //   controller: _dateController,
+              //   decoration: const InputDecoration(labelText: 'Date'),
+              //   validator: (value) {
+              //     if (value == null || value.isEmpty) {
+              //       return 'Please enter a date';
+              //     }
+              //     return null;
+              //   },
+              // ),
+              ,
               const SizedBox(height: 10),
               TextFormField(
                 controller: _locationController,

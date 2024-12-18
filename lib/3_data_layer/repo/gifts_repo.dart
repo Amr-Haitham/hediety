@@ -13,6 +13,7 @@ class GiftsRepo {
     return _generalCrudFirestore.generalSetdocInAppCollection(
         FirestoreCollectionNames.giftsCollection, gift.id, gift.toMap());
   }
+
   deleteGift({required String giftId}) {
     return _generalCrudFirestore.generalDeletedocInAppCollection(
         FirestoreCollectionNames.giftsCollection, giftId);
@@ -29,5 +30,13 @@ class GiftsRepo {
       gifts.add(Gift.fromMap(doc.data()));
     }
     return gifts;
+  }
+
+  Future<Gift> getSinglegift({required String giftId}) async {
+    var snapshot = await _firestore
+        .collection(FirestoreCollectionNames.giftsCollection)
+        .doc(giftId)
+        .get();
+    return Gift.fromMap(snapshot.data() as Map<String, dynamic>);
   }
 }

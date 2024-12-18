@@ -24,11 +24,39 @@ dependencies:
   country_codes: ^3.1.0+2
   rename: ^3.0.2
   image_picker: ^1.1.2
+  geolocator: ^13.0.2
+  geocoding: ^3.0.0
+  shared_preferences: ^2.3.3
+  permission_handler: ^11.3.1
+
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
+  build_runner: ^2.4.13
+  flutter_gen_runner: ^5.8.0
 
+
+#adding assets using flutter_gen
+# all you need to do is
+# Add flutter_gen, flutter_gen_runner build_runner to your pubspec.yaml file.
+# then, run flutter pub run build_runner build --delete-conflicting-outputs
+# then, Specify the input to be the images directory and the output directory in your pubspec.yaml file.
 flutter:
   uses-material-design: true
+  assets:
+    - assets/images/
+
+flutter_gen:
+  output: lib/gen/ # Optional (default: lib/gen/)
+  line_length: 80 # Optional (default: 80)
+
+  # Optional
+  integrations:
+    flutter_svg: true
+    flare_flutter: true
+    rive: true
+    lottie: true
+
+

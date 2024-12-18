@@ -26,6 +26,7 @@ class FriendsRepo {
     }
     var users = await AppUserRepo()
         .getAppUsersFromIds(ids: friends.map((e) => e.friendId).toList());
+
     return users;
   }
 }

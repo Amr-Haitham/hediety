@@ -3,14 +3,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hediety/2_controller/gifts_blocs/delete_gift_for_event/delete_gift_for_event_cubit.dart';
 import 'package:hediety/2_controller/gifts_blocs/get_gifts_for_event/get_gifts_for_event_cubit.dart';
 import 'package:hediety/2_controller/gifts_blocs/set_gift_for_event/set_gift_for_event_cubit.dart';
+import 'package:hediety/core/utils/auth_utils.dart';
 
 import '../../../3_data_layer/models/event.dart';
 import '../../../core/config/app_router.dart';
 
 class GiftsListScreen extends StatefulWidget {
   final Event event;
+  final bool isMyList;
 
-  const GiftsListScreen({Key? key, required this.event}) : super(key: key);
+  const GiftsListScreen({Key? key, required this.event, required this.isMyList})
+      : super(key: key);
 
   @override
   State<GiftsListScreen> createState() => _GiftsListScreenState();
@@ -27,6 +30,9 @@ class _GiftsListScreenState extends State<GiftsListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // print(widget.event.id);
+    // print(widget.isMyList);
+    // print("madl;ijadfljas;dflasdf");
     return MultiBlocListener(
       listeners: [
         BlocListener<DeleteGiftForEventCubit, DeleteGiftForEventState>(
@@ -67,7 +73,7 @@ class _GiftsListScreenState extends State<GiftsListScreen> {
               ),
               const SizedBox(height: 4),
               Text(
-                widget.event.date.toString(),
+                widget.event.date.toDate().toString().substring(0, 10),
                 style: const TextStyle(color: Colors.grey, fontSize: 14),
               ),
             ],
@@ -98,24 +104,42 @@ class _GiftsListScreenState extends State<GiftsListScreen> {
                                         color: Colors.white,
                                         thickness: 1,
                                       ),
-                                  itemBuilder: (context, index) => ListItem(
-                                        title: state.gifts[index].name,
-                                        onDelete: () {
-                                          BlocProvider.of<
-                                                      DeleteGiftForEventCubit>(
-                                                  context)
-                                              .deleteGiftForEvent(
-                                                  giftId:
-                                                      state.gifts[index].id);
-                                        },
-                                        onEdit: () {
+                                  itemBuilder: (context, index) =>
+                                      GestureDetector(
+                                        onTap: () {
                                           Navigator.pushNamed(context,
                                               Routes.setGiftsScreenRoute,
                                               arguments: {
                                                 "gift": state.gifts[index],
-                                                "eventId": widget.event.id
+                                                "eventId": widget.event.id,
+                                                "isMyGift": AuthUtils
+                                                        .getCurrentUserUid() ==
+                                                    widget.event.userId
                                               });
                                         },
+                                        child: ListItem(
+                                          title: state.gifts[index].name,
+                                          isMyList: widget.isMyList,
+                                          onDelete: () {
+                                            BlocProvider.of<
+                                                        DeleteGiftForEventCubit>(
+                                                    context)
+                                                .deleteGiftForEvent(
+                                                    giftId:
+                                                        state.gifts[index].id);
+                                          },
+                                          onEdit: () {
+                                            Navigator.pushNamed(context,
+                                                Routes.setGiftsScreenRoute,
+                                                arguments: {
+                                                  "gift": state.gifts[index],
+                                                  "eventId": widget.event.id,
+                                                  "isMyGift": AuthUtils
+                                                          .getCurrentUserUid() ==
+                                                      widget.event.userId
+                                                });
+                                          },
+                                        ),
                                       ));
                             } else if (state is GetGiftsForEventError) {
                               return Center(child: Text("Error"));
@@ -128,12 +152,21 @@ class _GiftsListScreenState extends State<GiftsListScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    AddButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, Routes.setGiftsScreenRoute,
-                            arguments: {"eventId": widget.event.id});
-                      },
-                    ),
+                    !(widget.isMyList)
+                        ? const SizedBox()
+                        : AddButton(
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                  context, Routes.setGiftsScreenRoute,
+                                  arguments: {
+                                    "eventId": widget.event.id,
+                                    "isMyGift": AuthUtils.getCurrentUserUid() ==
+                                            widget.event.userId
+                                        ? true
+                                        : false
+                                  });
+                            },
+                          ),
                   ],
                 ),
               ),
@@ -149,6 +182,7 @@ class _GiftsListScreenState extends State<GiftsListScreen> {
 class ListItem extends StatelessWidget {
   final String title;
   final String? imageUrl;
+  final bool isMyList;
   final Function()? onDelete;
   final Function()? onEdit;
 
@@ -156,6 +190,7 @@ class ListItem extends StatelessWidget {
       {Key? key,
       required this.title,
       this.imageUrl,
+      required this.isMyList,
       this.onDelete,
       this.onEdit})
       : super(key: key);
@@ -171,20 +206,24 @@ class ListItem extends StatelessWidget {
             style: const TextStyle(color: Colors.red, fontSize: 16),
           ),
           const Spacer(),
-          IconButton(
-            icon: const Icon(
-              Icons.edit,
-              color: Colors.red,
-            ),
-            onPressed: onEdit,
-          ),
-          IconButton(
-            icon: const Icon(
-              Icons.delete,
-              color: Colors.red,
-            ),
-            onPressed: onDelete,
-          ),
+          !(isMyList)
+              ? const SizedBox()
+              : IconButton(
+                  icon: const Icon(
+                    Icons.edit,
+                    color: Colors.red,
+                  ),
+                  onPressed: onEdit,
+                ),
+          !(isMyList)
+              ? const SizedBox()
+              : IconButton(
+                  icon: const Icon(
+                    Icons.delete,
+                    color: Colors.red,
+                  ),
+                  onPressed: onDelete,
+                ),
         ],
       ),
       trailing: imageUrl != null

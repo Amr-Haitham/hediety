@@ -1,8 +1,27 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hediety/2_controller/get_single_app_user/get_single_appuser_cubit.dart';
 import 'package:hediety/core/config/app_router.dart';
 
-class ProfileScreen extends StatelessWidget {
+import '../../../3_data_layer/models/app_user.dart';
+import '../../../gen/assets.gen.dart';
+
+class ProfileScreen extends StatefulWidget {
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  late AppUser appUser;
+
+  @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<GetSingleAppuserCubit>(context)
+        .getSingleAppUser(); // Call the cubit to fetch the user data
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,10 +39,21 @@ class ProfileScreen extends StatelessWidget {
             Column(
               children: [
                 const SizedBox(height: 20),
-                const ProfileHeader(),
+                BlocBuilder<GetSingleAppuserCubit, GetSingleAppuserState>(
+                  builder: (context, state) {
+                    if (state is GetSingleAppuserLoaded) {
+                      return ProfileHeader(
+                        appUser: state.appUser,
+                      );
+                    } else if (state is GetSingleAppuserError) {
+                      return const Text('Error');
+                    }
+                    return const CircularProgressIndicator();
+                  },
+                ),
                 const SizedBox(height: 40),
                 RedButton(
-                    label: "My lists",
+                    label: "My events",
                     onPressed: () {
                       Navigator.pushNamed(context, Routes.myEventsScreenRoute);
                     }),
@@ -48,22 +78,24 @@ class ProfileScreen extends StatelessWidget {
 }
 
 class ProfileHeader extends StatelessWidget {
-  const ProfileHeader({Key? key}) : super(key: key);
+  const ProfileHeader({Key? key, required this.appUser}) : super(key: key);
+  final AppUser appUser;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const CircleAvatar(
+        CircleAvatar(
           radius: 50,
-          backgroundImage: NetworkImage(
-              "https://via.placeholder.com/150"), // Replace with your image URL
+          backgroundColor: Colors.transparent,
+          backgroundImage: Assets.images.manSmiling1
+              .provider(), // Replace with your image URL
         ),
         const SizedBox(height: 12),
-        const Text(
-          "Ahmed Mohamed",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        Text(
+          appUser.name,
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
       ],
     );

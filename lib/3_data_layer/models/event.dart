@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Event {
   final String id;
   final String name;
-  final String date;
+  final Timestamp date;
   final String location;
   final String description;
   final String userId;
@@ -32,7 +34,7 @@ class Event {
     return Event(
       id: map['id'],
       name: map['name'],
-      date: map['date'],
+      date: map['date'] as Timestamp,
       location: map['location'],
       description: map['description'],
       userId: map['userId'],

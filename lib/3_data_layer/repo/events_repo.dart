@@ -17,7 +17,13 @@ class EventsRepo {
     return _generalCrudFirestore.generalDeletedocInAppCollection(
         FirestoreCollectionNames.eventsCollection, eventId);
   }
-
+  Future<Event> getSingleEvent({required String eventId}) async {
+    DocumentSnapshot snapshot = await _firestore
+        .collection(FirestoreCollectionNames.eventsCollection)
+        .doc(eventId)
+        .get();
+    return Event.fromMap(snapshot.data() as Map<String, dynamic>);
+  }
   Future<List<Event>> getAllEventsForAppUser({required String uid}) async {
     var snapshot = await _firestore
         .collection(FirestoreCollectionNames.eventsCollection)

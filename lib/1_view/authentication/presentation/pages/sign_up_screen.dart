@@ -22,7 +22,6 @@ import '../../auth_utility_functions/firebase_auth_services.dart';
 import '../../domain/entities/password_checker.dart';
 import '../../domain/sample_static_data.dart';
 
-
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
 
@@ -106,6 +105,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           listener: (context, state) {
             if (state is AuthenticationOpLoaded) {
               BlocProvider.of<SetAppUserCubit>(context).setAppUser(AppUser(
+                  imageUrl: "adsfa",
                   id: state.userCredential.user!.uid,
                   joinDate: DateTime.now(),
                   name: nameController.text,
@@ -268,8 +268,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Future<User?> handleSignUpRequest(BuildContext context) async {
     setState(() {
       submitButtonPressed = true;
-      passwordIsValid =
-          true;
+      passwordIsValid = true;
       emailIsValid = true;
     });
     if (!emailIsValid) {
@@ -367,7 +366,4 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
     );
   }
-
-
-
 }

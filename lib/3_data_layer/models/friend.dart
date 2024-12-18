@@ -1,9 +1,11 @@
 class Friend {
   final String userId;
   final String friendId;
+  final String id;
 
   Friend({
     required this.userId,
+    required this.id,
     required this.friendId,
   });
 
@@ -11,6 +13,7 @@ class Friend {
   Map<String, dynamic> toMap() {
     return {
       'userId': userId,
+      'id': id,
       'friendId': friendId,
     };
   }
@@ -18,6 +21,7 @@ class Friend {
   // Create Friend from Map
   factory Friend.fromMap(Map<String, dynamic> map) {
     return Friend(
+      id: map['id'],
       userId: map['userId'],
       friendId: map['friendId'],
     );
