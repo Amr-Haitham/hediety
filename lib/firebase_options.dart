@@ -47,28 +47,30 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDwnlF6OIoKzRov3G-9emlj_JAZUOLiMKo',
-    appId: '1:84469258596:web:05edd06a30904953a9c271',
-    messagingSenderId: '84469258596',
-    projectId: 'hediety',
-    authDomain: 'hediety.firebaseapp.com',
-    storageBucket: 'hediety.firebasestorage.app',
+    apiKey: 'AIzaSyCpdcttDuekgdC51UlLft3_c-6vC_YYYOo',
+    appId: '1:535448206513:web:8eaafcaeb2a01dab3e3690',
+    messagingSenderId: '535448206513',
+    projectId: 'mobile-project-fall-2025',
+    authDomain: 'mobile-project-fall-2025.firebaseapp.com',
+    storageBucket: 'mobile-project-fall-2025.firebasestorage.app',
+    measurementId: 'G-SKGCTT9NX9',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyA7PHoH0EduJs3Fv3NhYlBLbCjT4815A94',
-    appId: '1:84469258596:android:b6c45f0f39f08216a9c271',
-    messagingSenderId: '84469258596',
-    projectId: 'hediety',
-    storageBucket: 'hediety.firebasestorage.app',
+    apiKey: 'AIzaSyA0iQSNX0Yvd89eYO80wVNTlHOnLJ3amv4',
+    appId: '1:535448206513:android:2aaa8fef4d89c2603e3690',
+    messagingSenderId: '535448206513',
+    projectId: 'mobile-project-fall-2025',
+    storageBucket: 'mobile-project-fall-2025.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDbaaSvOv_GRjitkOEj1IXAGDsNEwRJnMw',
-    appId: '1:84469258596:ios:5cf8be85b3798635a9c271',
-    messagingSenderId: '84469258596',
-    projectId: 'hediety',
-    storageBucket: 'hediety.firebasestorage.app',
-    iosBundleId: 'com.example.hediety',
+    apiKey: 'AIzaSyC3BXzdzZWbVuVtaRI_fsj4g-gZOss3C-U',
+    appId: '1:535448206513:ios:63e3d555e4a364f03e3690',
+    messagingSenderId: '535448206513',
+    projectId: 'mobile-project-fall-2025',
+    storageBucket: 'mobile-project-fall-2025.firebasestorage.app',
+    iosBundleId: 'com.hediety.users',
   );
+
 }

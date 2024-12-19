@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hediety/2_controller/get_all_friends/get_all_friends_cubit.dart';
 import 'package:hediety/1_view/authentication/presentation/manager/authentication_op/authentication_op_cubit.dart';
 import 'package:hediety/2_controller/get_latest_events_for_friends/get_latest_events_for_friends_cubit.dart';
+import 'package:hediety/2_controller/notification_cubit.dart';
 import 'package:hediety/3_data_layer/models/app_user.dart';
 import '../../../../core/config/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -12,6 +13,7 @@ import '../../../../core/widgets/buttons/button_widget.dart';
 import '../../../../core/widgets/text_fields/text_field.dart';
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
+import '../../../3_data_layer/models/notification.dart' as CustomNotifications;
 
 import '../../../3_data_layer/models/event.dart';
 import '../../../gen/assets.gen.dart';
@@ -29,96 +31,103 @@ class _HomeScreenState extends State<HomeScreen> {
         .getLatestEventsForFriends();
     BlocProvider.of<GetSingleAppuserCubit>(context)
         .getSingleAppUser(); // Call the cubit to fetch the user data
+    BlocProvider.of<NotificationCubit>(context).startListening();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        title: BlocBuilder<GetSingleAppuserCubit, GetSingleAppuserState>(
-          builder: (context, state) {
-            if (state is GetSingleAppuserLoading) {
-              return const CircularProgressIndicator();
-            } else if (state is GetSingleAppuserError) {
-              return const Text('Error');
-            }
-            var appUser = (state as GetSingleAppuserLoaded).appUser;
-            return GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(context, Routes.profileScreenRoute);
-              },
-              child: Text(
-                appUser.name,
-                style:
-                    TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-              ),
-            );
-          },
-        ),
-        leading: CircleAvatar(
-          radius: 50,
-          backgroundColor: Colors.transparent,
-          backgroundImage: Assets.images.manSmiling1
-              .provider(), // Replace with your image URL
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications, color: Colors.red),
-            onPressed: () {
-              Navigator.pushNamed(context, Routes.notificationsScreenRoute);
-            },
-          ),
-        ],
-      ),
-      body: Center(
-        child: BlocBuilder<GetLatestEventsForFriendsCubit,
-            GetLatestEventsForFriendsState>(
-          builder: (context, state) {
-            if (state is GetLatestEventsForFriendsLoading ||
-                state is GetLatestEventsForFriendsInitial) {
-              return const CircularProgressIndicator();
-            }
-            if (state is GetLatestEventsForFriendsError) {
-              return const Text('Error');
-            }
-            var loadedState = state as GetLatestEventsForFriendsLoaded;
-
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SearchBar(),
-                const SizedBox(height: 20),
-                Expanded(
-                  child: CardList(
-                    cardsData: loadedState.friendToEvent,
-                  ),
+    return BlocListener<NotificationCubit, CustomNotifications.Notification?>(
+      listener: (context, notification) {
+        if (notification != null) {
+          showNotificationDialog(context, notification);
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.white,
+          title: BlocBuilder<GetSingleAppuserCubit, GetSingleAppuserState>(
+            builder: (context, state) {
+              if (state is GetSingleAppuserLoading) {
+                return const CircularProgressIndicator();
+              } else if (state is GetSingleAppuserError) {
+                return const Text('Error');
+              }
+              var appUser = (state as GetSingleAppuserLoaded).appUser;
+              return GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, Routes.profileScreenRoute);
+                },
+                child: Text(
+                  appUser.name,
+                  style: TextStyle(
+                      color: Colors.black, fontWeight: FontWeight.bold),
                 ),
-              ],
-            );
-          },
-        ),
-      ),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          // FloatingActionButton(
-          //   onPressed: () {
-          //     Navigator.pushNamed(context, Routes.eventFormScreenRoute);
-          //   },
-          //   child:  Icon(Icons.),
-          // ),
-          const SizedBox(width: 16),
-          FloatingActionButton(
-            onPressed: () {
-              Navigator.pushNamed(context, Routes.allUsersScreenRoute);
+              );
             },
-            
-            child: const Icon(Icons.contacts),
           ),
-        ],
+          leading: CircleAvatar(
+            radius: 50,
+            backgroundColor: Colors.transparent,
+            backgroundImage: Assets.images.manSmiling1
+                .provider(), // Replace with your image URL
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.notifications, color: Colors.red),
+              onPressed: () {
+                Navigator.pushNamed(context, Routes.notificationsScreenRoute);
+              },
+            ),
+          ],
+        ),
+        body: Center(
+          child: BlocBuilder<GetLatestEventsForFriendsCubit,
+              GetLatestEventsForFriendsState>(
+            builder: (context, state) {
+              if (state is GetLatestEventsForFriendsLoading ||
+                  state is GetLatestEventsForFriendsInitial) {
+                return const CircularProgressIndicator();
+              }
+              if (state is GetLatestEventsForFriendsError) {
+                return const Text('Error');
+              }
+              var loadedState = state as GetLatestEventsForFriendsLoaded;
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SearchBar(),
+                  const SizedBox(height: 20),
+                  Expanded(
+                    child: CardList(
+                      cardsData: loadedState.friendToEvent,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+        floatingActionButton: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            // FloatingActionButton(
+            //   onPressed: () {
+            //     Navigator.pushNamed(context, Routes.eventFormScreenRoute);
+            //   },
+            //   child:  Icon(Icons.),
+            // ),
+            const SizedBox(width: 16),
+            FloatingActionButton(
+              onPressed: () {
+                Navigator.pushNamed(context, Routes.allUsersScreenRoute);
+              },
+              child: const Icon(Icons.contacts),
+            ),
+          ],
+        ),
       ),
     );
   }

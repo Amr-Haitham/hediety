@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hediety/2_controller/add_pledge/add_pledge_cubit.dart';
@@ -6,8 +8,11 @@ import 'package:hediety/2_controller/gifts_blocs/set_gift_for_event/set_gift_for
 import 'package:hediety/3_data_layer/models/gift.dart';
 import 'package:hediety/3_data_layer/models/pledge.dart';
 import 'package:hediety/core/utils/auth_utils.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:uuid/uuid.dart';
-
+import 'dart:io';
 import '../../../core/utils/ui_utils.dart';
 
 class GiftFormScreen extends StatefulWidget {
@@ -27,17 +32,60 @@ class GiftFormScreen extends StatefulWidget {
 }
 
 class _GiftFormScreenState extends State<GiftFormScreen> {
+  Future<String?> processImage({
+    required File imageFile,
+    required BuildContext context,
+  }) async {
+    try {
+      // Check file size (in bytes)
+      final int fileSize = await imageFile.length();
+      if (fileSize > 100 * 1024) {
+        // Show error snack bar
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(
+                  'Image size exceeds 100KB. Please upload a smaller image.')),
+        );
+        return null;
+      }
+
+      // Read file and convert to Base64
+      final bytes = await imageFile.readAsBytes();
+      final base64String = base64Encode(bytes);
+      return base64String;
+    } catch (e) {
+      // Show error snack bar if something goes wrong
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to process image: $e')),
+      );
+      return null;
+    }
+  }
+
   final _giftNameController = TextEditingController();
   final _giftDescriptionController = TextEditingController();
   final _giftCategoryController = TextEditingController();
   final _giftPriceController = TextEditingController();
+  String? selectedImage;
+  File? selectedImageFile;
+
   @override
   void initState() {
     if (widget.gift != null) {
+      print(widget.gift?.imageUrl);
+      print("halalalalal");
       _giftNameController.text = widget.gift!.name;
       _giftDescriptionController.text = widget.gift!.description;
       _giftCategoryController.text = widget.gift!.category;
       _giftPriceController.text = widget.gift!.price.toString();
+      selectedImage = widget.gift!.imageUrl;
+      if (widget.gift!.imageUrl != null) {
+        (base64ToFile(widget.gift!.imageUrl!, "giftImage")).then((value) {
+          setState(() {
+            (selectedImageFile = value);
+          });
+        });
+      }
     }
     super.initState();
   }
@@ -173,15 +221,34 @@ class _GiftFormScreenState extends State<GiftFormScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    "Add photo   (optional)",
-                    style: TextStyle(color: Colors.black, fontSize: 16),
+                  ElevatedButton(
+                    onPressed: () async {
+                      await Permission.photos.request();
+
+                      var image = await ImagePicker()
+                          .pickImage(source: ImageSource.gallery);
+
+                      selectedImage = await processImage(
+                        imageFile: File(image!.path),
+                        context: context,
+                      );
+                      setState(() {
+                        selectedImageFile = File(image!.path);
+                      });
+                    },
+                    child: const Text(
+                      "Add photo  ",
+                      style: TextStyle(color: Colors.black, fontSize: 16),
+                    ),
                   ),
                   !(widget.isMyGift)
                       ? const SizedBox()
                       : TextButton(
                           onPressed: () {
-                            // Handle photo delete action
+                            setState(() {
+                              selectedImageFile = null;
+                              selectedImage = null;
+                            });
                           },
                           child: const Text(
                             "Delete",
@@ -196,8 +263,8 @@ class _GiftFormScreenState extends State<GiftFormScreen> {
                 height: 150,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8.0),
-                  image: const DecorationImage(
-                    image: NetworkImage("https://via.placeholder.com/300x150"),
+                  image: DecorationImage(
+                    image: FileImage(File(selectedImageFile?.path ?? "")),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -232,7 +299,8 @@ class _GiftFormScreenState extends State<GiftFormScreen> {
                                 _giftCategoryController.text.isNotEmpty &&
                                 _giftPriceController.text.isNotEmpty &&
                                 double.tryParse(_giftPriceController.text) !=
-                                    null) {
+                                    null &&
+                                selectedImage != null) {
                               BlocProvider.of<SetGiftForEventCubit>(context)
                                   .setGift(
                                       gift: Gift(
@@ -243,7 +311,7 @@ class _GiftFormScreenState extends State<GiftFormScreen> {
                                 description: _giftDescriptionController.text,
                                 category: _giftCategoryController.text,
                                 price: double.parse(_giftPriceController.text),
-                                imageUrl: widget.gift?.imageUrl,
+                                imageUrl: selectedImage,
                                 eventId: widget.eventId,
                                 status: GiftStatus.unpledged,
                               ));
@@ -337,5 +405,26 @@ class _PledgeButtonState extends State<PledgeButton> {
         );
       },
     );
+  }
+}
+
+Future<File?> base64ToFile(String base64Image, String fileName) async {
+  try {
+    // Decode the Base64 string to bytes
+    final bytes = base64Decode(base64Image);
+
+    // Get a temporary directory to store the file
+    final directory = await getTemporaryDirectory();
+
+    // Create the file in the directory
+    final file = File('${directory.path}/$fileName');
+
+    // Write the bytes to the file
+    await file.writeAsBytes(bytes);
+
+    return file; // Return the created file
+  } catch (e) {
+    print('Error converting Base64 to file: $e');
+    return null;
   }
 }

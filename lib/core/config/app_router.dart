@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hediety/1_view/all_users_screen/all_users_screen.dart';
@@ -32,6 +33,8 @@ import '../../1_view/authentication/presentation/pages/sign_up_screen.dart';
 import '../../1_view/home_screen/1_presentation/home_screen.dart';
 import '../../1_view/notifications_screen/notifications_screen.dart';
 import '../../1_view/profile_feature/1_presentation/profile_screen.dart';
+import '../../2_controller/notification_cubit.dart';
+import '../../main.dart';
 import '../utils/auth_utils.dart';
 
 class Routes {
@@ -84,21 +87,26 @@ class AppRouter {
                       create: (context) => AuthenticationCubit(),
                     ),
                   ],
-                  child: AuthWrapper(
-                    homeScreen: MultiBlocProvider(
-                      providers: [
-                        BlocProvider(
-                          create: (context) => GetLatestEventsForFriendsCubit(),
-                        ),
-                        BlocProvider(
-                          create: (context) => GetSingleAppuserCubit(),
-                        ),
-                      ],
-                      child: HomeScreen(),
-                    ),
-                    signInScreen: BlocProvider(
-                      create: (context) => AuthenticationOpCubit(),
-                      child: const SignInScreen(),
+                  child: BlocProvider(
+                    create: (context) => NotificationCubit(
+                        FirebaseAuth.instance.currentUser!.uid),
+                    child: AuthWrapper(
+                      homeScreen: MultiBlocProvider(
+                        providers: [
+                          BlocProvider(
+                            create: (context) =>
+                                GetLatestEventsForFriendsCubit(),
+                          ),
+                          BlocProvider(
+                            create: (context) => GetSingleAppuserCubit(),
+                          ),
+                        ],
+                        child: HomeScreen(),
+                      ),
+                      signInScreen: BlocProvider(
+                        create: (context) => AuthenticationOpCubit(),
+                        child: const SignInScreen(),
+                      ),
                     ),
                   ),
                 ));

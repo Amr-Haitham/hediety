@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "84469258596",
-    "project_id": "hediety",
-    "storage_bucket": "hediety.firebasestorage.app"
+    "project_number": "535448206513",
+    "project_id": "mobile-project-fall-2025",
+    "storage_bucket": "mobile-project-fall-2025.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:84469258596:android:b6c45f0f39f08216a9c271",
+        "mobilesdk_app_id": "1:535448206513:android:2aaa8fef4d89c2603e3690",
         "android_client_info": {
           "package_name": "com.hediety.users"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyA7PHoH0EduJs3Fv3NhYlBLbCjT4815A94"
+          "current_key": "AIzaSyA0iQSNX0Yvd89eYO80wVNTlHOnLJ3amv4"
         }
       ],
       "services": {
